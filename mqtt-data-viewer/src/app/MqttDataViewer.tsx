@@ -7,7 +7,7 @@ const MqttDataViewer: React.FC = () => {
   const [bmeData, setBmeData] = useState('');
 
   useEffect(() => {
-    const client = mqtt.connect('ws://mosquitto-mqtt-gw:9001/mqtt');
+    const client = mqtt.connect('ws://localhost:9001/mqtt');
 
     client.on('connect', () => {
       console.log('Connected to MQTT broker');
