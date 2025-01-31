@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import mqtt from 'mqtt';
 
 const MqttDataViewer: React.FC = () => {
-  const [thcData, setThcData] = useState('');
-  const [bmeData, setBmeData] = useState('');
+  const [thcData, setThcData] = useState<string[]>([]);
+  const [bmeData, setBmeData] = useState<string[]>([]);
 
   useEffect(() => {
     const client = mqtt.connect('ws://localhost:9001/mqtt');
@@ -18,9 +18,9 @@ const MqttDataViewer: React.FC = () => {
     client.on('message', (topic, message) => {
       const data = message.toString();
       if (topic.includes('THC-S')) {
-        setThcData(data);
+        setThcData((prevData) => [...prevData, data]);
       } else if (topic.includes('BME280')) {
-        setBmeData(data);
+        setBmeData((prevData) => [...prevData, data]);
       }
     });
 
@@ -33,11 +33,17 @@ const MqttDataViewer: React.FC = () => {
     <div>
       <h1>MQTT Data Viewer</h1>
       <h2>THC-S Sensor Data</h2>
-      <h2>Last THC-S Sensor Data</h2>
-      <p>{thcData}</p>
+      <ul>
+        {thcData.map((data, index) => (
+          <li key={index}>{data}</li>
+        ))}
+      </ul>
       <h2>BME280 Sensor Data</h2>
-      <h2>Last BME280 Sensor Data</h2>
-      <p>{bmeData}</p>
+      <ul>
+        {bmeData.map((data, index) => (
+          <li key={index}>{data}</li>
+        ))}
+      </ul>
     </div>
   );
 };
