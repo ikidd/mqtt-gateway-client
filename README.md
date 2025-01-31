@@ -64,3 +64,72 @@ GPIO 26  <--> DI0
 - Update the WiFi and MQTT credentials in `esp32_lora_mqtt_gateway.ino`.
 - Upload the sketches to their respective ESP32 devices.
 - Monitor the serial output for debugging and data verification.
+
+## Docker Compose Setup
+
+To build and run the Docker containers for the web application and Mosquitto MQTT server, follow these steps:
+
+1. **Build and Start the Services**:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+    This command builds the Docker image for the web application using the `Dockerfile` in the `mqtt-data-viewer` folder and starts both the `mosquitto` MQTT server and the `mqtt-data-viewer` web application containers in detached mode.
+
+2. **Access the Application**:
+
+    Open your web browser and navigate to `http://localhost:7180` to view the MQTT Data Viewer application.
+
+3. **Stopping the Services**:
+
+    To stop the running containers, use:
+
+    ```bash
+    docker-compose down
+    ```
+
+4. **Rebuilding the Docker Images**:
+
+    If you make changes to the Dockerfile or the application, rebuild the images:
+
+    ```bash
+    docker-compose build
+    ```
+
+    Then, restart the services:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+## Additional Notes
+
+- **Environment Variables**: If your application requires environment variables (e.g., MQTT broker credentials), consider using Docker's `-e` flag or an environment file to pass them securely.
+
+    ```bash
+    docker-compose run -d \
+      -e MQTT_USER=your_MQTT_USER \
+      -e MQTT_PASSWORD=your_MQTT_PASSWORD \
+      mqtt-data-viewer
+    ```
+
+- **Volume Mounting**: For development purposes, you might want to mount your local project directory into the Docker container to enable live reloading.
+
+    ```bash
+    docker-compose run -d \
+      -v $(pwd)/mqtt-data-viewer:/app \
+      mqtt-data-viewer
+    ```
+
+    This setup allows you to make changes to your code locally and have them reflected inside the container immediately.
+
+- **Logging**: To view the logs from your Docker containers, use:
+
+    ```bash
+    docker-compose logs -f
+    ```
+
+    This command streams the logs, allowing you to monitor the application's behavior in real-time.
+
+By following these steps, you can effectively containerize and deploy your MQTT Data Viewer web application using Docker Compose, ensuring both the application and the Mosquitto MQTT server run seamlessly together.

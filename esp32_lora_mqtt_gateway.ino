@@ -1,3 +1,4 @@
+// Include necessary libraries
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <SPI.h>
@@ -8,7 +9,7 @@ const char* ssid = "your_SSID";
 const char* password = "your_PASSWORD";
 
 // MQTT Broker
-const char* mqtt_server = "broker.hivemq.com";
+const char* mqtt_server = "mosquitto";
 const int mqtt_port = 1883;
 const char* mqtt_user = "your_MQTT_USER";
 const char* mqtt_password = "your_MQTT_PASSWORD";
@@ -157,5 +158,4 @@ void processBME280SensorData(String clientName, String data) {
     client.publish(("esp32/" + clientName + "/BME280/temperature").c_str(), temperature.c_str());
     client.publish(("esp32/" + clientName + "/BME280/humidity").c_str(), humidity.c_str());
     client.publish(("esp32/" + clientName + "/BME280/pressure").c_str(), pressure.c_str());
-  }
 }
