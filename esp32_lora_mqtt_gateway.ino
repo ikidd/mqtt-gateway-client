@@ -114,7 +114,37 @@ void loop() {
     String clientName = incoming.substring(0, firstComma);
     String data = incoming.substring(firstComma + 1);
 
-    // Split data into individual readings
+    // Determine sensor type
+    int sensorIndex = data.indexOf("Sensor:");
+    String sensorType = data.substring(sensorIndex + 7, data.indexOf(',', sensorIndex));
+
+    if (sensorType == "THC-S") {
+      processTHCSensorData(clientName, data);
+    } else if (sensorType == "BME280") {
+      processBME280SensorData(clientName, data);
+    } else {
+      Serial.println("Unknown sensor type");
+    }
+}
+
+void processTHCSensorData(String clientName, String data) {
+    // Parse THC-S sensor data
+    int tempIndex = data.indexOf("Temp:");
+    int moistureIndex = data.indexOf("Moisture:");
+    int conductivityIndex = data.indexOf("Conductivity:");
+
+    String temperature = data.substring(tempIndex + 5, moistureIndex - 1);
+    String moisture = data.substring(moistureIndex + 9, conductivityIndex - 1);
+    String conductivity = data.substring(conductivityIndex + 13);
+
+    // Publish to individual MQTT topics under sensor type
+    client.publish(("esp32/" + clientName + "/THC-S/temperature").c_str(), temperature.c_str());
+    client.publish(("esp32/" + clientName + "/THC-S/moisture").c_str(), moisture.c_str());
+    client.publish(("esp32/" + clientName + "/THC-S/conductivity").c_str(), conductivity.c_str());
+}
+
+void processBME280SensorData(String clientName, String data) {
+    // Parse BME280 sensor data
     int tempIndex = data.indexOf("Temp:");
     int humidityIndex = data.indexOf("Humidity:");
     int pressureIndex = data.indexOf("Pressure:");
@@ -123,9 +153,9 @@ void loop() {
     String humidity = data.substring(humidityIndex + 9, pressureIndex - 1);
     String pressure = data.substring(pressureIndex + 9);
 
-    // Publish to individual MQTT topics
-    client.publish(("esp32/" + clientName + "/temperature").c_str(), temperature.c_str());
-    client.publish(("esp32/" + clientName + "/humidity").c_str(), humidity.c_str());
-    client.publish(("esp32/" + clientName + "/pressure").c_str(), pressure.c_str());
+    // Publish to individual MQTT topics under sensor type
+    client.publish(("esp32/" + clientName + "/BME280/temperature").c_str(), temperature.c_str());
+    client.publish(("esp32/" + clientName + "/BME280/humidity").c_str(), humidity.c_str());
+    client.publish(("esp32/" + clientName + "/BME280/pressure").c_str(), pressure.c_str());
   }
 }
