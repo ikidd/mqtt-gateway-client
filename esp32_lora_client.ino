@@ -68,7 +68,30 @@ void loop() {
     LoRa.endPacket();
   }
 
-  // Read THC-S sensor data
+  // Send sensor data every 30 seconds
+  if (millis() - lastSendTime > interval) {
+    lastSendTime = millis();
+
+    String thcData = readTHCSensor();
+    String bmeData = readBMESensor();
+
+    if (!thcData.isEmpty()) {
+      Serial.println("Sending THC-S sensor data: " + thcData);
+      LoRa.beginPacket();
+      LoRa.print(thcData);
+      LoRa.endPacket();
+    }
+
+    if (!bmeData.isEmpty()) {
+      Serial.println("Sending BME280 sensor data: " + bmeData);
+      LoRa.beginPacket();
+      LoRa.print(bmeData);
+      LoRa.endPacket();
+    }
+  }
+}
+
+String readTHCSensor() {
   uint8_t result;
   float temperature, moisture, conductivity;
 
@@ -77,23 +100,20 @@ void loop() {
     temperature = node.getResponseBuffer(0x00) / 10.0;
     moisture = node.getResponseBuffer(0x01) / 10.0;
     conductivity = node.getResponseBuffer(0x02);
-  } else {
-    Serial.println("Failed to read from THC-S sensor");
-  }
-
-  // Send THC-S sensor data every 30 seconds
-  if (millis() - lastSendTime > interval) {
-    lastSendTime = millis();
-    float temperature = bme.readTemperature();
-    float humidity = bme.readHumidity();
-    float pressure = bme.readPressure() / 100.0F;
 
     String sensorType = "THC-S";
-    String data = clientName + ",Sensor:" + sensorType + ",Temp:" + String(temperature) + ",Moisture:" + String(moisture) + ",Conductivity:" + String(conductivity);
-    Serial.println("Sending THC-S sensor data: " + data);
-
-    LoRa.beginPacket();
-    LoRa.print(data);
-    LoRa.endPacket();
+    return clientName + ",Sensor:" + sensorType + ",Temp:" + String(temperature) + ",Moisture:" + String(moisture) + ",Conductivity:" + String(conductivity);
+  } else {
+    Serial.println("Failed to read from THC-S sensor");
+    return "";
   }
+}
+
+String readBMESensor() {
+  float temperature = bme.readTemperature();
+  float humidity = bme.readHumidity();
+  float pressure = bme.readPressure() / 100.0F;
+
+  String sensorType = "BME280";
+  return clientName + ",Sensor:" + sensorType + ",Temp:" + String(temperature) + ",Humidity:" + String(humidity) + ",Pressure:" + String(pressure);
 }
