@@ -1,7 +1,17 @@
-
 "use client";
 import React, { useEffect, useState } from 'react';
 import mqtt from 'mqtt';
+import fs from 'fs';
+
+const logFilePath = '/var/logs/mqtt-app.log';
+
+const logToFile = (message: string) => {
+  fs.appendFile(logFilePath, `${new Date().toISOString()} - ${message}\n`, (err) => {
+    if (err) {
+      console.error('Failed to write to log file:', err);
+    }
+  });
+};
 
 const MqttDataViewer: React.FC = () => {
   const [thcData, setThcData] = useState('');
@@ -12,12 +22,14 @@ const MqttDataViewer: React.FC = () => {
 
     client.on('connect', () => {
       console.log('Connected to MQTT broker');
+      logToFile('Connected to MQTT broker');
       client.subscribe('esp32/+/THC-S/#');
       client.subscribe('esp32/+/BME280/#');
     });
 
     client.on('message', (topic, message) => {
       const data = message.toString();
+      logToFile(`Received message on topic ${topic}: ${data}`);
       if (topic.includes('THC-S')) {
         setThcData(data);
       } else if (topic.includes('BME280')) {
