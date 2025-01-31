@@ -9,6 +9,18 @@ const char* ssid = "your_SSID";
 const char* password = "your_PASSWORD";
 
 // MQTT Broker
+const char* mqtt_server = "192.168.1.10";
+// Include necessary libraries
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <SPI.h>
+#include <LoRa.h>
+
+// WiFi credentials
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
+
+// MQTT Broker
 const char* mqtt_server = "mosquitto";
 const int mqtt_port = 1883;
 const char* mqtt_user = "your_MQTT_USER";
