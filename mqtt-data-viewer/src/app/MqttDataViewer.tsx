@@ -21,7 +21,7 @@ const MqttDataViewer: React.FC = () => {
         setThcData((prevData) => [...prevData, data]);
       } else if (topic.includes('BME280')) {
         setBmeData((prevData) => [...prevData, data]);
-      }
+      }c
     });
 
     return () => {
