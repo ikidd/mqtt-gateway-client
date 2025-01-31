@@ -45,6 +45,19 @@ I2C SDA <--> SDA
 I2C SCL <--> SCL
 ```
 
+## Wiring Diagram for ESP32 Gateway
+
+```
+ESP32          LoRa Module
+--------------------------
+GPIO 5   <--> SCK
+GPIO 19  <--> MISO
+GPIO 27  <--> MOSI
+GPIO 18  <--> SS
+GPIO 14  <--> RST
+GPIO 26  <--> DI0
+```
+
 ## Usage
 
 - Ensure that the necessary libraries are installed for both sketches.
