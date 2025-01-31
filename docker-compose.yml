@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  mosquitto:
+  mosquitto-mqtt-gw:
     image: eclipse-mosquitto:latest
-    container_name: mosquitto
+    container_name: mosquitto-mqtt-gw
     ports:
       - "1883:1883"
       - "9001:9001"
@@ -19,4 +19,4 @@ services:
     ports:
       - "7180:3000"
     depends_on:
-      - mosquitto
+      - mosquitto-mqtt-gw
